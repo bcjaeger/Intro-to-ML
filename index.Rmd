@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Machine Learning (ML)"
+title: "Introduction to Machine Learning"
 author: "Byron C. Jaeger"
 date: "Last updated: `r Sys.Date()`"
 output:
@@ -29,10 +29,12 @@ options(htmltools.dir.version = FALSE)
 
 knitr::opts_chunk$set(
   echo=FALSE,
+  warning = FALSE,
+  message = FALSE,
   fig.width=12, 
   fig.height=6, 
   dpi=72*5,
-  cache=TRUE
+  cache=FALSE
 )
 
 library(diagram)
@@ -44,6 +46,14 @@ library(kableExtra)
 library(scales)
 library(widgetframe)
 library(magrittr)
+
+thm  <- theme_bw() + 
+  theme(
+    text = element_text(size=18, face = 'bold'),
+    panel.grid = element_blank()
+  )
+
+theme_set(thm)
 
 ```
 
@@ -67,171 +77,139 @@ I study <br/> machine learning, missing data, ambulatory blood pressure, and car
 ---
 class: middle, center
 
-# Part 1: What is Machine Learning?
+# PART I
+
+# What is Machine Learning?
 
 ---
-layout: true
-background-image: url(figs/robot_hex.jpg)
-background-position: 95% 5%
-background-size: 18%
-
-# What is ML?
+layout: true 
+class: center, middle
 
 ---
 
-.large[ML is well known, but common misconceptions abound:]
-
---
-
-- .large[Deep learning is a synonym for ML]
-
---
-
-- .large[Artificial intelligence is a synonym of ML]
-
---
-
-- .large[Everything about ML is a black box.]
-
---
-
-.large[If these are wrong, what is right?]
+### Machine learning is well known, but common misconceptions abound...
 
 ---
 
+### Artificial intelligence is the same thing as machine learning...?
+
+---
+
+### Machine learning is a type of deep learning...?
+
+---
+
+### Everything that involves machine learning involves a black box...?
+
+---
+
+### If these are wrong, what is right?
+
+---
+layout: false
 background-image: url(figs/Ai-vs-ML-vs-Deep-Learning.png)
 background-size: 90%
 background-position: 50% 50%
 
----
+# What is ML?
 
-1. End-to-end data analysis
-
---
-
-2. The bias-variance tradeoff principle
-
---
-
-3. Internal validation of predictive algorithms
-
---
-
-and one application to the Jackson Heart Study
-
---
-
-*(Bonus)* Apply R packages from the `tidyverse` 
-
---
-
-*(If there is time)* Communicate results from black-box methods
 
 ---
-class: inverse, middle, center
+background-image: url(figs/ml_diagram.png)
+background-size: 90%
+background-position: 50% 50%
 
-# End-to-End Data Analysis
+---
+layout: true
+
+# ML vs. Inference
 
 ---
 
-## **Data analysis** 
+## Statistical Inference
 
-Usually oriented toward prediction or inference. 
+- .large[Forming judgments about the parameters of a population.]
 
---
+- .large[**Hypothesis** driven (exploring is frowned upon)]
 
-### **Statistical inference**
-
-- Forming judgments about the parameters of a population.
-
-- Hypothesis driven (exploring is frowned upon)
-
-- End-to-end analysis is rare
+- .large[End-point of analysis is **knowledge**]
 
 --
 
-### **Predictive analytics** 
+### Inference $\Rightarrow$ guidelines $\Rightarrow$ decisions $\Rightarrow$ outcomes
 
-- Forming a decision rule that can assist with tasks that involve uncertainty.
-
-- Performance driven (exploring is necessary)
-
-- End-to-end analysis is common
 
 ---
 
+## Supervised Learning 
+
+- .large[Forming a prediction function to engage with uncertainty.]
+
+- .large[**Performance** driven (exploring is necessary)]
+
+- .large[End-point of analysis is a **prediction function**]
+
+--
+
+### Predictions $\Rightarrow$ decisions $\Rightarrow$ outcomes
+
+---
+layout: false
 class: middle, center
 
-# End-to-end data analysis
-
 ```{r, out.width='90%'}
-
-knitr::include_graphics(
-  "Intro_to_Predictive_Analytics_files/data_analysis_flow.jpg"
-)
-
+include_graphics("figs/data_analysis_flow.jpg")
 ```
 
 ---
 class: middle, center
 
-# Data product demo
-
-### https://bcjaeger.shinyapps.io/DPE4NHTN_WebApp/
+# [Data product demo](https://bcjaeger.shinyapps.io/DPE4NHTN_WebApp/)
 
 ---
-class: inverse, middle, center
+class: middle, center
 
-# Bias-Variance Tradeoff
+# PART II
+
+# Core Principles of Machine Learning
+
 ---
 layout: true
-background-image: url(hex_stickers/PNG/dplyr.png)
+background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
 
-# The bias-variance tradeoff
+# Core Principles of ML
 
 ---
 
-### What is it?
+### Bias-variance tradeoff
 
  You may recognize the terms bias and variance if you have some experience with statistics.
 
 --
 
-- Bias: difference between observed and predicted values (in training data)
+- **Bias:** expected difference between observed and predicted values (in training data)
 
-- Variance: measure of dispersion in the distribution of predicted values.
+- **Variance:** measure of dispersion in the distribution of predicted values.
 
 These are correct (but not helpful) definitions.
 
 ---
 
-### What is it?
+### Bias-variance tradeoff
 
 You may recognize the terms bias and variance if you have some experience with statistics.
 
-- Bias: how well does a model predict its training data?
+- **Bias:** how well does a model predict its training data?
 
-- Variance: how complex is the model?
+- **Variance:** how complex is the model?
 
 These are incorrect (but helpful) definitions.
 
---
-
-*Fact:* Reducing bias generally increases variance. 
-
---
-
-*Unfair question:* Does reducing bias reduce prediction error for new data?
-
---
-
-Let's work through an example to demonstrate why this question is unfair
-
 ---
 
-**Example:** Given a training set of 25 observations, develop a prediction rule that minimizes squared error for a testing set of 25,000 observations. 
+**Example:** Suppose data have the form $\mathcal{D} = (Y,X)$, where $Y = f(X)$, and $f$ is an unknown function. 
 
 ```{r}
 
@@ -244,20 +222,168 @@ xgrid=seq(min(x),max(x),length.out=100)
 truth=data.frame(x=xgrid)%>%mutate(y=x*(3+sin(pi*x/3)))
 
 ggplot(ggdat,aes(x=x,y=y))+geom_point(size=3)+
-  labs(title='Simulated Data',x='X-value',y='Y-value')+
-  geom_line(data=truth,aes(x=x,y=y),color='red',linetype=2)
+  labs(title='Simulated Data',x='X-value',y='Y-value')
 
 ```
 
 ---
 
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+```{r}
+
+ggplot(ggdat,aes(x=x,y=y))+geom_point(size=3)+
+  labs(title='Simulated Data',x='X-value',y='Y-value')+
+  geom_line(data=truth,aes(x=x,y=y),color='red',linetype=2)
+
+your_data <- as_tibble(ggdat)
+
+spars = seq(1.0, 0.3, length.out = 15)
+mdl_cmplx = 1:length(spars)
+grid_plots = vector(mode = 'list', length = length(spars))
+my_data = truth %>% 
+  mutate(y = y + rnorm(length(xgrid), sd = xgrid)) %>% 
+  as_tibble()
+
+sqr <- function(x)
+  x ^ 2
+
+
+```
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** I give you a dataset with 25 observations:
+```{r, eval = FALSE, echo=TRUE}
+print(your_data)
+```
+]
+
+.pull-right[
+```{r}
+print(your_data)
+```
+]
+
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** I'm keeping a dataset away from you. It has `r nrow(my_data)` observations:
+```{r, eval = FALSE, echo=TRUE}
+print(my_data)
+```
+]
+
+.pull-right[
+```{r}
+print(my_data)
+```
+]
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** I'll give you my $X$ values, and then you'll try to predict what my $Y$ values are 
+```{r, eval = FALSE, echo=TRUE}
+select(my_data, x)
+```
+]
+
+.pull-right[
+```{r}
+select(my_data, x)
+```
+]
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** Let's say your predictions are the mean of your observed $Y$ values, $$\widehat{Y} = \frac{1}{`r nrow(your_data)`}\sum_{i=1}^{`r nrow(your_data)`} (Y_i^{\text{(your data)}})^2$$.
+
+```{r, eval = FALSE, echo=TRUE}
+
+yobs <- my_data$y
+yobs[1:10]
+
+yhat <- mean(your_data$y)
+yhat
+
+```
+]
+
+.pull-right[
+```{r}
+
+yobs <- my_data$y
+matrix(yobs[1:10], ncol=1)
+
+yhat <- mean(your_data$y)
+yhat
+
+```
+]
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** I will calculate how accurate your predictions are by computing $$\frac{1}{`r nrow(my_data)`}\sum_{i=1}^{`r nrow(my_data)`} (Y_i^{\text{(my data)}}-\widehat{Y})^2$$
+```{r, eval = FALSE, echo=TRUE}
+
+# squared differences
+sqr_diffs <- (yobs - yhat)^2
+# mean squared error
+mean(sqr_diffs)
+
+```
+]
+
+.pull-right[
+```{r}
+
+sqr_diffs <- (yobs - yhat)^2
+mean(sqr_diffs)
+
+```
+]
+
+---
+
+**Example:** Suppose data have the form $\mathcal{D} = (X,Y)$, where $Y = f(X)$, and $f$ is an unknown function. (Okay - I know $f$, but you have to estimate it)
+
+.pull-left[
+**Workflow:** That's not a great mean squared error. Maybe we can do better if we develop a function $\widehat{f}(X)$ that predicts $Y$.
+
+```{r, eval = FALSE, echo=TRUE}
+
+model <- ???
+
+```
+]
+
+.pull-right[
+```{r}
+
+yhat
+
+```
+]
+
+---
+
 ```{r, cache=TRUE}
 
-spars=seq(1.0,0.3,length.out=15)
-mdl_cmplx=1:length(spars)
-grid_plots=vector(mode='list',length=length(spars))
-newdata=truth%>%mutate(y=y+rnorm(length(xgrid), sd=xgrid))
-sqr<-function(x) x^2
 
 mprf=data.frame(
   cmp=mdl_cmplx,
@@ -271,18 +397,18 @@ for(i in mdl_cmplx){
   
   m=gam(y~s(x,spar=spars[i]),data=ggdat)
   ggdat$prd=predict(m)
-  newdata$prd=predict(m,newdata=newdata)
+  my_data$prd=predict(m,newdata=my_data)
   
   p1=ggplot(ggdat,aes(x=x,y=y))+geom_point(size=3)+
-    geom_line(data=newdata,aes(x=x,y=prd),col='blue')+
+    geom_line(data=my_data,aes(x=x,y=prd),col='blue')+
     geom_line(data=truth,aes(x=x,y=y),linetype=2,col='red')+
     labs(title=paste("derivation data error:",format(round(sqrt(mean(sqr(
-      ggdat$y-ggdat$prd))),3),nsmall=3), '\n Model AIC', format(round(
+      ggdat$y-ggdat$prd))),3),nsmall=3), '\nModel AIC', format(round(
         AIC(m),2),nsmall=2)))
   
   mprf[i,c('trn','tst')]<-c(
     sqrt(mean(sqr(ggdat$y-ggdat$prd))),
-    sqrt(mean(sqr(newdata$y-newdata$prd)))
+    sqrt(mean(sqr(my_data$y-my_data$prd)))
   )
   
   p2=ggplot(mprf%>%
@@ -291,7 +417,7 @@ for(i in mdl_cmplx){
               dplyr::mutate(cmp=cmp-1),
             aes(x=cmp,y=value,col=variable))+
     geom_point(size=3)+
-    theme(legend.position='')+
+    thm + theme(legend.position='') + 
     scale_color_brewer(palette='Dark2')+
     labs(y='Model Error',x='Model Complexity',
          title='derivation error (blue) and \ntesting error (orange)')

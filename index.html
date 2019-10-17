@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>Introduction to Machine Learning (ML)</title>
+    <title>Introduction to Machine Learning</title>
     <meta charset="utf-8" />
     <meta name="author" content="Byron C. Jaeger" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
@@ -10,7 +10,7 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Introduction to Machine Learning (ML)
+# Introduction to Machine Learning
 ### Byron C. Jaeger
 ### Last updated: 2019-10-16
 
@@ -48,740 +48,326 @@ I study &lt;br/&gt; machine learning, missing data, ambulatory blood pressure, a
 ---
 class: middle, center
 
-# Part 1: Core principles of Machine Learning
+# PART I
+
+# What is Machine Learning?
 
 ---
-layout: true
-background-image: url(figs/robot_hex.jpg)
-background-position: 95% 5%
-background-size: 18%
-
-# Core principles of ML
+layout: true 
+class: center, middle
 
 ---
 
-.large[ML is well known, but common misconceptions abound:]
-
---
-
-- .large[Deep learning is a synonym for ML]
-
---
-
-- .large[Artificial intelligence is a synonym of ML]
-
---
-
-- .large[Everything about ML is a black box.]
-
---
-
-.large[If these are wrong, what is right?]
+### Machine learning is well known, but common misconceptions abound...
 
 ---
 
+### Artificial intelligence is the same thing as machine learning...?
+
+---
+
+### Machine learning is a type of deep learning...?
+
+---
+
+### Everything that involves machine learning involves a black box...?
+
+---
+
+### If these are wrong, what is right?
+
+---
+layout: false
 background-image: url(figs/Ai-vs-ML-vs-Deep-Learning.png)
 background-size: 90%
 background-position: 50% 50%
 
----
+# What is ML?
 
-1. End-to-end data analysis
-
---
-
-2. The bias-variance tradeoff principle
-
---
-
-3. Internal validation of predictive algorithms
-
---
-
-and one application to the Jackson Heart Study
-
---
-
-*(Bonus)* Apply R packages from the `tidyverse` 
-
---
-
-*(If there is time)* Communicate results from black-box methods
 
 ---
-class: inverse, middle, center
+background-image: url(figs/ml_diagram.png)
+background-size: 90%
+background-position: 50% 50%
 
-# End-to-End Data Analysis
-
----
-
-## **Data analysis** 
-
-Usually oriented toward prediction or inference. 
-
---
-
-### **Statistical inference**
-
-- Forming judgments about the parameters of a population.
-
-- Hypothesis driven (exploring is frowned upon)
-
-- End-to-end analysis is rare
-
---
-
-### **Predictive analytics** 
-
-- Forming a decision rule that can assist with tasks that involve uncertainty.
-
-- Performance driven (exploring is necessary)
-
-- End-to-end analysis is common
-
----
-
-class: middle, center
-
-# End-to-end data analysis
-
-&lt;img src="Intro_to_Predictive_Analytics_files/data_analysis_flow.jpg" width="90%" /&gt;
-
----
-class: middle, center
-
-# Data product demo
-
-### https://bcjaeger.shinyapps.io/DPE4NHTN_WebApp/
-
----
-class: inverse, middle, center
-
-# Bias-Variance Tradeoff
 ---
 layout: true
-background-image: url(hex_stickers/PNG/dplyr.png)
+
+# ML vs. Inference
+
+---
+
+## Statistical Inference
+
+- .large[Forming judgments about the parameters of a population.]
+
+- .large[**Hypothesis** driven (exploring is frowned upon)]
+
+- .large[End-point of analysis is **knowledge**]
+
+--
+
+### Inference `\(\Rightarrow\)` guidelines `\(\Rightarrow\)` decisions `\(\Rightarrow\)` outcomes
+
+
+---
+
+## Supervised Learning 
+
+- .large[Forming a prediction function to engage with uncertainty.]
+
+- .large[**Performance** driven (exploring is necessary)]
+
+- .large[End-point of analysis is a **prediction function**]
+
+--
+
+### Predictions `\(\Rightarrow\)` decisions `\(\Rightarrow\)` outcomes
+
+---
+layout: false
+class: middle, center
+
+&lt;img src="figs/data_analysis_flow.jpg" width="90%" /&gt;
+
+---
+class: middle, center
+
+# [Data product demo](https://bcjaeger.shinyapps.io/DPE4NHTN_WebApp/)
+
+---
+class: middle, center
+
+# PART II
+
+# Core Principles of Machine Learning
+
+---
+layout: true
+background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
 
-# The bias-variance tradeoff
+# Core Principles of ML
 
 ---
 
-### What is it?
+### Bias-variance tradeoff
 
  You may recognize the terms bias and variance if you have some experience with statistics.
 
 --
 
-- Bias: difference between observed and predicted values (in training data)
+- **Bias:** expected difference between observed and predicted values (in training data)
 
-- Variance: measure of dispersion in the distribution of predicted values.
+- **Variance:** measure of dispersion in the distribution of predicted values.
 
 These are correct (but not helpful) definitions.
 
 ---
 
-### What is it?
+### Bias-variance tradeoff
 
 You may recognize the terms bias and variance if you have some experience with statistics.
 
-- Bias: how well does a model predict its training data?
+- **Bias:** how well does a model predict its training data?
 
-- Variance: how complex is the model?
+- **Variance:** how complex is the model?
 
 These are incorrect (but helpful) definitions.
 
---
-
-*Fact:* Reducing bias generally increases variance. 
-
---
-
-*Unfair question:* Does reducing bias reduce prediction error for new data?
-
---
-
-Let's work through an example to demonstrate why this question is unfair
-
 ---
 
-**Example:** Given a training set of 25 observations, develop a prediction rule that minimizes squared error for a testing set of 25,000 observations. 
+**Example:** Suppose data have the form `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. 
 
 ![](index_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
 ---
 
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+![](index_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
-
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
-
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
-
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
-
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
-
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
-
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
-
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+---
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
+.pull-left[
+**Workflow:** I give you a dataset with 25 observations:
 
+```r
+print(your_data)
 ```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
+]
 
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
+## # A tibble: 25 x 2
+##        y     x
+##    &lt;dbl&gt; &lt;dbl&gt;
+##  1  8.05  1.68
+##  2 41.7   8.08
+##  3 11.2   3.85
+##  4  7.83  3.28
+##  5 17.5   6.02
+##  6 15.9   6.04
+##  7  3.90  1.25
+##  8  6.60  2.95
+##  9 20.6   5.78
+## 10 22.1   6.31
+## # ... with 15 more rows
 ```
+]
 
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+---
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
+.pull-left[
+**Workflow:** I'm keeping a dataset away from you. It has 100 observations:
 
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
+```r
+print(my_data)
 ```
+]
 
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
+## # A tibble: 100 x 2
+##        x     y
+##    &lt;dbl&gt; &lt;dbl&gt;
+##  1 0.153 0.503
+##  2 0.242 0.552
+##  3 0.332 1.33 
+##  4 0.421 1.61 
+##  5 0.510 0.573
+##  6 0.599 2.74 
+##  7 0.688 2.51 
+##  8 0.777 3.99 
+##  9 0.866 2.74 
+## 10 0.955 4.58 
+## # ... with 90 more rows
 ```
+]
 
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
+---
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+.pull-left[
+**Workflow:** I'll give you my `\(X\)` values, and then you'll try to predict what my `\(Y\)` values are 
 
+```r
+select(my_data, x)
 ```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
+]
 
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
+## # A tibble: 100 x 1
+##        x
+##    &lt;dbl&gt;
+##  1 0.153
+##  2 0.242
+##  3 0.332
+##  4 0.421
+##  5 0.510
+##  6 0.599
+##  7 0.688
+##  8 0.777
+##  9 0.866
+## 10 0.955
+## # ... with 90 more rows
 ```
+]
 
-```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
-```
+---
 
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+.pull-left[
+**Workflow:** Let's say your predictions are the mean of your observed `\(Y\)` values, `$$\widehat{Y} = \frac{1}{25}\sum_{i=1}^{25} (Y_i^{\text{(your data)}})^2$$`.
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
+```r
+yobs &lt;- my_data$y
+yobs[1:10]
 
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
+yhat &lt;- mean(your_data$y)
+yhat
 ```
+]
 
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
+##            [,1]
+##  [1,] 0.5034636
+##  [2,] 0.5515679
+##  [3,] 1.3320930
+##  [4,] 1.6082271
+##  [5,] 0.5734291
+##  [6,] 2.7400121
+##  [7,] 2.5085339
+##  [8,] 3.9934786
+##  [9,] 2.7431047
+## [10,] 4.5792541
 ```
 
 ```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
+## [1] 14.41691
 ```
+]
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+---
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
+.pull-left[
+**Workflow:** I will calculate how accurate your predictions are by computing `$$\frac{1}{100}\sum_{i=1}^{100} (Y_i^{\text{(my data)}}-\widehat{Y})^2$$`
 
+```r
+# squared differences
+sqr_diffs &lt;- (yobs - yhat)^2
+# mean squared error
+mean(sqr_diffs)
 ```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
-```
+]
 
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
+## [1] 137.0994
 ```
+]
 
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
+---
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
+**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
+.pull-left[
+**Workflow:** That's not a great mean squared error. Maybe we can do better if we develop a function `\(\widehat{f}(X)\)` that predicts `\(Y\)`.
 
-```
-## Warning in model.matrix.default(mt, mf, contrasts): non-list contrasts
-## argument ignored
-```
 
-```
-## Warning in seq.default(along = smoothers): partial argument match of
-## 'along' to 'along.with'
+```r
+model &lt;- ???
 ```
+]
 
-```
-## Warning in seq.default(along = ff): partial argument match of 'along' to
-## 'along.with'
-```
+.pull-right[
 
 ```
-## Warning in seq.default(along = assignx): partial argument match of 'along'
-## to 'along.with'
+## [1] 14.41691
 ```
+]
 
-```
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-
-## Warning in seq.default(len = qrx$rank): partial argument match of 'len' to
-## 'length.out'
-```
+---
 
-```
-## Warning in seq.default(len = fitqr$rank): partial argument match of 'len'
-## to 'length.out'
-```
 
-```
-## Warning in seq.default(3 * nef + n + 10, length = k - 4): partial argument
-## match of 'length' to 'length.out'
-```
 
 
 ```r
@@ -789,7 +375,7 @@ Let's work through an example to demonstrate why this question is unfair
 model &lt;- gam(y ~ s(x, spar=1), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -797,7 +383,7 @@ model &lt;- gam(y ~ s(x, spar=1), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.95), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -805,7 +391,7 @@ model &lt;- gam(y ~ s(x, spar=0.95), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.90), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
 ---
 
 
@@ -814,7 +400,7 @@ model &lt;- gam(y ~ s(x, spar=0.90), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.85), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
 ---
 
 
@@ -823,7 +409,7 @@ model &lt;- gam(y ~ s(x, spar=0.85), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.80), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -831,7 +417,7 @@ model &lt;- gam(y ~ s(x, spar=0.80), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.75), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
 ---
 
 
@@ -840,7 +426,7 @@ model &lt;- gam(y ~ s(x, spar=0.75), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.70), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -848,7 +434,7 @@ model &lt;- gam(y ~ s(x, spar=0.70), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.65), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -856,7 +442,7 @@ model &lt;- gam(y ~ s(x, spar=0.65), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.60), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
 ---
 
 
@@ -865,7 +451,7 @@ model &lt;- gam(y ~ s(x, spar=0.60), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.55), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
 ---
 
 
@@ -874,7 +460,7 @@ model &lt;- gam(y ~ s(x, spar=0.55), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.50), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
 ---
 
 ```r
@@ -882,7 +468,7 @@ model &lt;- gam(y ~ s(x, spar=0.50), data=simulated_data)
 model &lt;- gam(y ~ s(x, spar=0.45), data=simulated_data)
 ```
 
-![](index_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
