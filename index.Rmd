@@ -107,12 +107,13 @@ class: center, middle
 
 ---
 layout: false
-background-image: url(figs/Ai-vs-ML-vs-Deep-Learning.png)
-background-size: 90%
-background-position: 50% 50%
+class: middle
 
 # What is ML?
 
+```{r, out.width='100%'}
+include_graphics("figs/Ai-vs-ML-vs-Deep-Learning.png")
+```
 
 ---
 background-image: url(figs/ml_diagram.png)
