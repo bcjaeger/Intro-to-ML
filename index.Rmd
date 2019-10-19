@@ -107,12 +107,11 @@ class: center, middle
 
 ---
 layout: false
-class: middle
 
 # What is ML?
 
 ```{r, out.width='100%'}
-include_graphics("figs/Ai-vs-ML-vs-Deep-Learning.png")
+include_graphics("figs/ai_ml_dl.png")
 ```
 
 ---
