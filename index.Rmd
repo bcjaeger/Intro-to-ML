@@ -200,6 +200,8 @@ class: middle, center, inverse
 ---
 class: middle, center
 
+# Core principal 1:
+
 # Bias-variance tradeoff
 
 ---
@@ -694,6 +696,8 @@ print(tb1)
 ---
 class: center, middle
 
+# Core principal 2:
+
 # External validation
 
 ---
@@ -1084,7 +1088,9 @@ derivation <- mcs %>%
   select(-m0_impl_yr)
 
 validation <- mcs %>% 
-  filter(m0_impl_yr >= 2016) %>% 
+  filter(
+    m0_impl_yr >= 2016
+  ) %>% 
   select(-m0_impl_yr)
 
 dim(derivation)
@@ -1464,6 +1470,8 @@ class: center, middle
 
 ---
 
+# Core principal 3:
+
 # Modeling algorithms
 
 ---
@@ -1494,10 +1502,6 @@ That's the ad-hoc modeling algorithm definition. More formally, there are phases
 
     + Select models, tuning parameters, and predictor variables to use, then fit the model(s).
     
-- **Model ensembling**
-
-    + If multiple models were used, develop a strategy to pool them.
-
 ---
 layout: true 
 background-image: url(hex_stickers/PNG/tidymodels.png)
@@ -1508,7 +1512,42 @@ background-size: 13%
 
 ---
 
-more to come 
+### Case study
+
+We have seen results using a standard pre-processing `recipe` mean and mode imputation).
+
+What might happen if we applied nearest neighbor imputation instead?
+
+```{r, echo = TRUE, eval = FALSE}
+
+reci <- recipe(
+  formula = time + status ~ ., 
+  data = derivation
+) %>% 
+  step_knnimpute(all_predictors()) %>%  
+  prep()
+
+.knn_derivation <- juice(reci)
+.knn_validation <- bake(reci, new_data = validation)
+
+```
+
+---
+
+```{r}
+ibs_vals <- list(
+  `Pre-implant data` = frm_1,
+  `Week 1 follow-up data` = frm_2
+) %>% 
+  map_dbl(
+    .f = ~ coxph(.x, data = .derivation, x = TRUE) %>% 
+      predictSurvProb(newdata = .validation, times = btimes) %>% 
+      ibs_scale(newdata = .validation, eval_times = btimes)
+  )
+
+ibs_vals
+```
+
 
 ---
 
