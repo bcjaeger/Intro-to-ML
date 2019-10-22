@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Byron C. Jaeger" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
   </head>
   <body>
     <textarea id="source">
@@ -12,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Introduction to Machine Learning
 ### Byron C. Jaeger
-### Last updated: 2019-10-16
+### Last updated: 2019-10-21
 
 ---
 
@@ -37,16 +39,30 @@ I like running, walking my dog, bad margaritas, Rocket League, and (of course) R
 
 I study &lt;br/&gt; machine learning, missing data, ambulatory blood pressure, and cardiovascular disease.
 
+Also, I'm a &lt;br/&gt;Biostatistician!
+
 ]
 
 .right-column[
 
-&lt;img src="figs/run_R_kids.png" width="100%" align="right" /&gt;
+&lt;img src="figs/run_R_kids_markedup.png" width="100%" align="right" /&gt;
 
 ]
 
 ---
-class: middle, center
+class: center
+background-image: url(figs/scream_face.jpg)
+background-position: 50% 70%
+background-size: 30%
+
+
+# Wait.
+
+## Is this a math talk?
+
+
+---
+class: middle, center, inverse
 
 # PART I
 
@@ -94,6 +110,9 @@ layout: true
 # ML vs. Inference
 
 ---
+background-image: url(figs/stats_inference.png)
+background-size: 15%
+background-position: 95% 5%
 
 ## Statistical Inference
 
@@ -109,6 +128,9 @@ layout: true
 
 
 ---
+background-image: url(figs/data_mining.jpg)
+background-size: 20%
+background-position: 95% 5%
 
 ## Supervised Learning 
 
@@ -134,29 +156,36 @@ class: middle, center
 # [Data product demo](https://bcjaeger.shinyapps.io/DPE4NHTN_WebApp/)
 
 ---
-class: middle, center
+class: middle, center, inverse
 
 # PART II
 
 # Core Principles of Machine Learning
 
 ---
+class: middle, center
+
+# Bias-variance tradeoff
+
+---
 layout: true
-background-image: url(hex_stickers/PNG/tidymodels.png)
-background-position: 95% 2.5%
-background-size: 13%
+background-image: url(figs/esl.jpg)
+background-position: 96% 4%
+background-size: 18%
 
 # Core Principles of ML
 
+### Bias-variance tradeoff
+
+
 ---
 
-### Bias-variance tradeoff
 
  You may recognize the terms bias and variance if you have some experience with statistics.
 
 --
 
-- **Bias:** expected difference between observed and predicted values (in training data)
+- **Bias:** expected difference between observed and predicted values (in derivation data)
 
 - **Variance:** measure of dispersion in the distribution of predicted values.
 
@@ -164,11 +193,9 @@ These are correct (but not helpful) definitions.
 
 ---
 
-### Bias-variance tradeoff
-
 You may recognize the terms bias and variance if you have some experience with statistics.
 
-- **Bias:** how well does a model predict its training data?
+- **Bias:** how well does a model predict its derivation data?
 
 - **Variance:** how complex is the model?
 
@@ -176,19 +203,19 @@ These are incorrect (but helpful) definitions.
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. 
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 ![](index_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 ![](index_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
 **Workflow:** I give you a dataset with 25 observations:
@@ -221,7 +248,7 @@ print(your_data)
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
 **Workflow:** I'm keeping a dataset away from you. It has 100 observations:
@@ -253,7 +280,7 @@ print(my_data)
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
 **Workflow:** I'll give you my `\(X\)` values, and then you'll try to predict what my `\(Y\)` values are 
@@ -285,7 +312,7 @@ select(my_data, x)
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
 **Workflow:** Let's say your predictions are the mean of your observed `\(Y\)` values, `$$\widehat{Y} = \frac{1}{25}\sum_{i=1}^{25} (Y_i^{\text{(your data)}})^2$$`.
@@ -323,29 +350,29 @@ yhat
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
-**Workflow:** I will calculate how accurate your predictions are by computing `$$\frac{1}{100}\sum_{i=1}^{100} (Y_i^{\text{(my data)}}-\widehat{Y})^2$$`
+**Workflow:** I will calculate how accurate your predictions are by computing `$$\sqrt{\frac{1}{100}\sum_{i=1}^{100} (Y_i^{\text{(my data)}}-\widehat{Y})^2}$$`
 
 ```r
 # squared differences
 sqr_diffs &lt;- (yobs - yhat)^2
 # mean squared error
-mean(sqr_diffs)
+sqrt(mean(sqr_diffs))
 ```
 ]
 
 .pull-right[
 
 ```
-## [1] 137.0994
+## [1] 11.70895
 ```
 ]
 
 ---
 
-**Example:** Suppose data have the form `\(\mathcal{D} = (X,Y)\)`, where `\(Y = f(X)\)`, and `\(f\)` is an unknown function. (Okay - I know `\(f\)`, but you have to estimate it)
+**Example:** Suppose data are `\(\mathcal{D} = (Y,X)\)`, where `\(Y = f(X)\)` and `\(f\)` is an unknown function. 
 
 .pull-left[
 **Workflow:** That's not a great mean squared error. Maybe we can do better if we develop a function `\(\widehat{f}(X)\)` that predicts `\(Y\)`.
@@ -359,7 +386,7 @@ model &lt;- ???
 .pull-right[
 
 ```
-## [1] 14.41691
+## [1] 11.70895
 ```
 ]
 
@@ -467,6 +494,1099 @@ model &lt;- gam(y ~ s(x, spar=0.45), data=simulated_data)
 ```
 
 ![](index_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+
+---
+layout: false
+background-image: url(gifs/cat_snow_gif.gif)
+background-position: 50% 60%
+background-size: 50%
+
+# In summary...
+
+---
+class: inverse, center, middle
+
+# Case Study
+
+---
+layout: true
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
+
+# Case Study
+
+### INTERMACS
+
+---
+
+**What is it?**
+
+- Interagency Registry for Mechanically Assisted Circulatory Support
+
+- Contains data from patients with advanced heart failure receiving mechanical circulatory support (MCS). 
+
+---
+
+**Why use it?**
+
+- Patients who elect to receive MCS are at risk for a number of adverse events related to the device, such as death, stroke, malfunction, and infection.
+
+- Targeted medical intervention should be directed to patients at high risk for events. 
+    
+- But...**who** is at risk? and **what** are they at risk for?
+
+---
+layout: false
+background-image: url(figs/intermacs_slides/Slide1.PNG)
+background-position: 20% 50%
+background-size: 120%
+
+# Case Study
+
+### INTERMACS
+
+---
+background-image: url(figs/intermacs_slides/Slide2.PNG)
+background-position: 20% 50%
+background-size: 120%
+
+# Case Study
+
+### INTERMACS
+
+---
+background-image: url(figs/intermacs_slides/Slide3.PNG)
+background-position: 20% 50%
+background-size: 120%
+
+# Case Study
+
+### INTERMACS
+
+---
+
+
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 1: INTERMACS patient characteristics&lt;/caption&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden" colspan="2"&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="3"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;Survived 1 year&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Overall&lt;br&gt;(N = 18975) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Yes&lt;br&gt;(N = 18038) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Censored&lt;br&gt;(N = 191) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; No&lt;br&gt;(N = 746) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Age, years &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.9 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.7 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 52.7 (13.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 436 (2.30) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 416 (2.31) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6 (3.14) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 14 (1.88) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 828 (4.36) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 788 (4.37) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4 (2.09) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 36 (4.83) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1533 (8.08) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1462 (8.11) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 58 (7.77) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2011 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1793 (9.45) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1712 (9.49) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 10 (5.24) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 71 (9.52) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2012 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2147 (11.3) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2073 (11.5) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8 (4.19) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 66 (8.85) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2552 (13.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2444 (13.5) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 95 (12.7) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2014 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2677 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2541 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 14 (7.33) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 122 (16.4) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2015 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2924 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2781 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 131 (17.6) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2016 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2587 (13.6) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2483 (13.8) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 92 (12.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1498 (7.89) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1338 (7.42) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 99 (51.8) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 61 (8.18) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;*&lt;/sup&gt; Table values are mean (standard deviation) and count (percent) for continuous and categorical variables, respectively.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+
+---
+class: center, middle
+
+# External validation
+
+---
+layout: true
+background-image: url(figs/text_trio.jpg)
+background-position: 96% 4%
+background-size: 25%
+
+# Core Principles of ML
+
+---
+
+### External validation
+
+**Why is this a core principle?** 
+
+Anyone can predict what they already know. The value of prediction is tied to anticipating *external* information.
+
+**What is external information?**
+
+Data that comes from a different 
+
+- place and / or time.
+
+- research organization and / or team
+
+- instrument
+
+- population
+
+than the derivation data.
+
+---
+
+### External validation with INTERMACS
+
+**Problem:** Develop a function `\(\widehat{f}(t):\)` <i class="fas  fa-user-circle "></i> `\(\rightarrow (0,1]\)` 
+
+- `\(\widehat{f}(t)\)` predicts risk for *mortality* at or before `\(t\)`.
+
+- `\(t\)` ranges from 1 week to 1 years post MCS surgery.
+
+- <i class="fas  fa-user-circle "></i> is **new** patient data collected
+
+    + prior to MCS surgery at a pre-implant visit (variables with prefix `m0`)
+    
+    + 1 week after MCS surgery at a follow-up visit (variables with prefix `m0_25`)
+
+--
+
+**Question:** How do we know `\(\widehat{f}(t)\)` is accurate?
+
+- Bias-variace tradeoff `\(\Rightarrow\)` we need a relevant set of **new** data to test `\(\widehat{f}(t)\)`.
+
+---
+layout: false
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 1: INTERMACS patient characteristics&lt;/caption&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden" colspan="2"&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="3"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;Survived 1 year&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Overall&lt;br&gt;(N = 18975) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Yes&lt;br&gt;(N = 18038) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Censored&lt;br&gt;(N = 191) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; No&lt;br&gt;(N = 746) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Age, years &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.9 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.7 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 52.7 (13.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 436 (2.30) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 416 (2.31) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6 (3.14) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 14 (1.88) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 828 (4.36) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 788 (4.37) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4 (2.09) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 36 (4.83) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1533 (8.08) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1462 (8.11) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 58 (7.77) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2011 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1793 (9.45) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1712 (9.49) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 10 (5.24) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 71 (9.52) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2012 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2147 (11.3) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2073 (11.5) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8 (4.19) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 66 (8.85) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2552 (13.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2444 (13.5) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 95 (12.7) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2014 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2677 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2541 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 14 (7.33) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 122 (16.4) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2015 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2924 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2781 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 131 (17.6) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: red !important;" indentlevel="1"&gt; 2016 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 2587 (13.6) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 2483 (13.8) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 92 (12.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: red !important;" indentlevel="1"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 1498 (7.89) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 1338 (7.42) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 99 (51.8) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: red !important;"&gt; 61 (8.18) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;*&lt;/sup&gt; Table values are mean (standard deviation) and count (percent) for continuous and categorical variables, respectively.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+layout: false
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 1: INTERMACS patient characteristics&lt;/caption&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden" colspan="2"&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="3"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;Survived 1 year&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Overall&lt;br&gt;(N = 18975) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Yes&lt;br&gt;(N = 18038) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Censored&lt;br&gt;(N = 191) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; No&lt;br&gt;(N = 746) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Age, years &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.9 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 56.7 (12.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 52.7 (13.9) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 436 (2.30) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 416 (2.31) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6 (3.14) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 14 (1.88) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 828 (4.36) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 788 (4.37) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4 (2.09) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 36 (4.83) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1533 (8.08) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1462 (8.11) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 58 (7.77) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2011 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1793 (9.45) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1712 (9.49) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 10 (5.24) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 71 (9.52) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: green !important;" indentlevel="1"&gt; 2012 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2147 (11.3) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2073 (11.5) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 8 (4.19) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 66 (8.85) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: green !important;" indentlevel="1"&gt; 2013 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2552 (13.4) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2444 (13.5) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 13 (6.81) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 95 (12.7) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: green !important;" indentlevel="1"&gt; 2014 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2677 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2541 (14.1) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 14 (7.33) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 122 (16.4) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;font-weight: bold;color: white !important;background-color: green !important;" indentlevel="1"&gt; 2015 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2924 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 2781 (15.4) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;color: white !important;background-color: green !important;"&gt; 131 (17.6) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2016 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2587 (13.6) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2483 (13.8) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12 (6.28) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 92 (12.3) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left; padding-left: 2em;" indentlevel="1"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1498 (7.89) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1338 (7.42) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 99 (51.8) &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 61 (8.18) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td style="padding: 0; border:0;" colspan="100%"&gt;
+&lt;sup&gt;*&lt;/sup&gt; Table values are mean (standard deviation) and count (percent) for continuous and categorical variables, respectively.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+layout: true
+background-image: url(figs/esl.jpg)
+background-position: 96% 4%
+background-size: 18%
+
+# Core Principles of ML
+
+---
+
+### External validation with INTERMACS
+
+**Problem:** Develop a function `\(\widehat{f}(t):\)` <i class="fas  fa-user-circle "></i> `\(\rightarrow (0,1]\)` 
+
+- `\(\widehat{f}(t)\)` predicts risk for *mortality* at or before `\(t\)`.
+
+- `\(t\)` ranges from 1 week to 1 years post MCS surgery.
+
+- <i class="fas  fa-user-circle "></i> is **new** patient data collected
+
+    + prior to MCS surgery at a pre-implant visit (variables with prefix `m0`)
+    
+    + 1 week after MCS surgery at a follow-up visit (variables with prefix `m0_25`)
+
+**Question:** How do we know `\(\widehat{f}(t)\)` is accurate?
+
+- Relevant set of **new** data to test `\(\widehat{f}(t)\)`: INTERMACS **data from 2016-2017**. <i class="fas  fa-check " style="color:green;"></i>
+
+- Given `\(t\)`, validation outcomes `\(\in \left\{0, 1\right\} \Rightarrow\)` compare observed outcome to `\(\widehat{f}(t)\)`
+
+---
+layout: true
+background-image: url(figs/scream_face.jpg)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+
+---
+
+### Brier Score
+
+The **Brier score** of a predicted probability `$$\widehat{f}(t) \in (0, 1]$$` for an observed event `$$Y(t) \in \left\{ 0, 1 \right\}$$` is `$$\left( \widehat{f}(t) -  Y(t) \right)^{2}.$$`
+
+**Examples** 
+
+- If `\(\widehat{f}(t) = 0.10\)` and `\(Y=0\)`, the **Brier score** is `\((0.10 - 0.00)^{2} = 0.01\)`.
+
+- If `\(\widehat{f}(t) = 0.50\)`, the **Brier score** is always 0.25. Why?
+
+---
+
+### Brier Score at a given time
+
+
+![](index_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+
+---
+
+### Brier Score at a given time
+
+![](index_files/figure-html/unnamed-chunk-48-1.png)&lt;!-- --&gt;
+
+
+---
+
+### Brier Score at a given time
+
+![](index_files/figure-html/unnamed-chunk-49-1.png)&lt;!-- --&gt;
+
+---
+
+### Brier Score at another given time
+
+
+![](index_files/figure-html/unnamed-chunk-50-1.png)&lt;!-- --&gt;
+
+---
+
+### Brier Score at many given times
+
+
+![](index_files/figure-html/unnamed-chunk-51-1.png)&lt;!-- --&gt;
+
+---
+
+### Integrated Brier Score
+
+**Why?**
+
+Integrating the Brier score over a range of times summarizes overall prediction accuracy. 
+
+**How?**
+
+Computing Brier scores at all potential times for one observation, i.e.,
+
+`$$\text{ibs}(T) = \frac{1}{\text{T}} \int_{0}^{T} \left(\widehat{f}(t) - Y(t) \right)^{2} dt$$`
+
+For a validation sample with `\(N\)` observations, 
+
+`$$\text{IBS}(T) = \frac{1}{N} \sum_{i=1}^N \text{ibs}_i(T)$$`
+
+
+
+---
+
+### Scaled Brier Score
+
+**Why?**
+
+- IBS = 0 `\(\Rightarrow\)` perfect model. Great! What if IBS = 0.05?
+
+- IBS = 0.25 `\(\Rightarrow\)` non-informative model, if the outcome has 50% prevalence.
+
+- Max IBS is determined by the prevalence of the outcome.
+
+**How?** 
+
+If the outcome is present in 10% of the population, then the max IBS is 
+
+`$$(0.1) \cdot (1–0.1)^{2} + (1–0.1) \cdot (0.1)^{2} = 0.090$$` 
+
+So if our model gets an IBS of 0.05, we could scale it to be `\(\leq 1\)` using 
+
+`$$1 - \frac{0.05}{0.090} = 0.444$$`
+
+---
+
+layout: true
+background-image: url(figs/esl.jpg)
+background-position: 96% 4%
+background-size: 18%
+
+# Core Principles of ML
+
+---
+
+### External validation with INTERMACS
+
+**Problem:** Develop a function `\(\widehat{f}(t):\)` <i class="fas  fa-user-circle "></i> `\(\rightarrow (0,1]\)` 
+
+- `\(\widehat{f}(t)\)` predicts risk for *mortality* at or before `\(t\)`.
+
+- `\(t\)` ranges from 1 week to 1 years post MCS surgery.
+
+- <i class="fas  fa-user-circle "></i> is **new** patient data collected
+
+    + prior to MCS surgery at a pre-implant visit (variables with prefix `m0`)
+    
+    + 1 week after MCS surgery at a follow-up visit (variables with prefix `m0_25`)
+
+**Question:** How do we know `\(\widehat{f}(t)\)` is accurate?
+
+- Relevant set of **new** data to test `\(\widehat{f}(t)\)`: INTERMACS **data from 2016-2017**. <i class="fas  fa-check " style="color:green;"></i>
+
+- Compare observed outcome to `\(\widehat{f}(t)\)` using the **scaled integrated Brier score**. <i class="fas  fa-check " style="color:green;"></i>
+
+
+
+---
+layout: true
+
+# Case study
+
+---
+background-image: url(hex_stickers/PNG/dplyr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+### ML workflow for INTERMACS
+
+Make the derivation / validation sets
+
+.pull-left[
+
+
+```r
+derivation &lt;- mcs %&gt;% 
+  filter(
+    m0_impl_yr &gt;= 2012,
+    m0_impl_yr &lt;= 2015
+  ) %&gt;% 
+  select(-m0_impl_yr)
+
+validation &lt;- mcs %&gt;% 
+  filter(m0_impl_yr &gt;= 2016) %&gt;% 
+  select(-m0_impl_yr)
+
+dim(derivation)
+
+dim(validation)
+
+dim(mcs)
+```
+
+
+]
+
+.pull-right[
+
+
+```
+## [1] 10300   529
+```
+
+```
+## [1] 4085  529
+```
+
+```
+## [1] 18975   530
+```
+
+
+]
+
+---
+background-image: url(hex_stickers/PNG/recipes.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+### ML workflow for INTERMACS
+
+The R package, `recipes`, lets you specify step-by-step instructions for data pre-processing.
+
+The pre-processing steps applied here:
+
+1. impute continuous variables to the mean,
+
+2. impute categorical variables to the mode.
+
+
+```r
+reci &lt;- recipe(
+  formula = time + status ~ ., 
+  data = derivation
+) %&gt;% 
+  step_meanimpute(all_numeric()) %&gt;% 
+  step_modeimpute(all_nominal()) %&gt;% 
+  prep()
+```
+
+---
+background-image: url(hex_stickers/PNG/recipes.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+### ML workflow for INTERMACS
+
+The R package, `recipes`, lets you specify step-by-step instructions for data pre-processing.
+
+
+```
+## Data Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          2
+##  predictor        527
+## 
+## Training data contained 10300 data points and 10300 incomplete rows. 
+## 
+## Operations:
+## 
+## Mean Imputation for m0_age_deident, ... [trained]
+## Mode Imputation for m0_admission_reason, ... [trained]
+```
+
+---
+background-image: url(hex_stickers/PNG/recipes.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+### ML workflow for INTERMACS
+
+`.derivation` and `.validation` represent pre-processed versions of `derivation` and `validation`. (In this case, pre-processed = imputed).
+
+
+```r
+# pre-processed derivation / validation data
+.derivation &lt;- juice(reci)
+.validation &lt;- bake(reci, new_data = validation)
+
+dim(na.omit(derivation))
+```
+
+```
+## [1]   0 529
+```
+
+```r
+dim(na.omit(.derivation))
+```
+
+```
+## [1] 10300   529
+```
+
+
+---
+background-image: url(hex_stickers/PNG/recipes.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+### ML workflow for INTERMACS
+
+`btimes` is a sequence comprising all of the times we will evaluate predicted risk for mortality.
+
+
+```r
+# times to evaluate predictions
+btimes &lt;- seq(min(validation$time), 12, length.out = 500)
+
+btimes[1:10]
+```
+
+```
+##  [1] 0.1971293 0.2207824 0.2444354 0.2680884 0.2917415 0.3153945 0.3390476
+##  [8] 0.3627006 0.3863537 0.4100067
+```
+
+---
+background-image: url(figs/intermacs_model_table.png)
+background-position: 50% 70%
+background-size: 80%
+
+---
+background-image: url(figs/intermacs_model_table_edited.jpg)
+background-position: 50% 70%
+background-size: 80%
+
+---
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
+
+### ML workflow for INTERMACS
+
+
+
+
+`frm_1` is a model formula comprising variables listed in the early hazard phase.
+
+
+```r
+# expert model formula 
+
+frm_1 &lt;- Surv(time, status) ~ 
+  age2 + # age squared 
+  ccs +  # critical cardiogenic shock
+  m0_cv_pres + # central venous pressure
+  m0_bili_total_mg_dl + # bilirubin
+  m0_lvedd + # left ventricular end-diastolic dimension
+  m0_intervention_48_hrs_dialysis + # prior to surgery
+  m0_bun_mg_dl + # blood urea nitrogen
+  m0_albumin_g_dl + # urinary albumin
+  m0_prev_cardiac_oper_none # no previous heart operation
+```
+
+---
+
+background-image: url(hex_stickers/PNG/pipe.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+
+
+
+ML workflow using `%&gt;%` (read as **then**).
+
+1. Fit the Cox Proportional Hazards (`coxph`) model, **then**
+
+2. using the `coxph` model, predict survival probabilities in the `.validation` data, **then**
+
+3. using the predicted survival probabilities at all of the `btimes`, compute the IBS.
+
+
+```r
+ibs_cph_1 &lt;- coxph(frm_1, data = .derivation, x = TRUE) %&gt;% 
+  predictSurvProb(newdata = .validation, times = btimes) %&gt;% 
+  ibs_scale(newdata = .validation, eval_times = btimes)
+
+ibs_cph_1
+```
+
+```
+## [1] 0.03848166
+```
+
+---
+
+background-image: url(hex_stickers/PNG/pipe.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+
+What if we use week 1 follow-up data instead of pre-implant data?
+
+
+```r
+frm_2 &lt;- Surv(time, status) ~ 
+  age2 + # age squared 
+  ccs +  # critical cardiogenic shock
+  m0_25_cv_pres + # central venous pressure
+  m0_25_bili_total_mg_dl + # bilirubin
+  m0_25_lvedd + # left ventricular end-diastolic dimension
+  m0_intervention_48_hrs_dialysis + # prior to surgery
+  m0_25_bun_mg_dl + # blood urea nitrogen
+  m0_25_albumin_g_dl + # urinary albumin
+  m0_prev_cardiac_oper_none # no previous heart operation
+
+
+ibs_cph_2 &lt;- coxph(frm_2, data = .derivation, x = TRUE) %&gt;% 
+  predictSurvProb(newdata = .validation, times = btimes) %&gt;% 
+  ibs_scale(newdata = .validation, eval_times = btimes)
+
+ibs_cph_2
+```
+
+```
+## [1] 0.08318288
+```
+
+---
+background-image: url(hex_stickers/PNG/purrr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+We can clean this iterative code up with `purrr::map()`
+
+
+```r
+ibs_vals &lt;- list(
+  `Pre-implant data` = frm_1,
+  `Week 1 follow-up data` = frm_2
+) %&gt;% 
+  map_dbl(
+    .f = ~ coxph(.x, data = .derivation, x = TRUE) %&gt;% 
+      predictSurvProb(newdata = .validation, times = btimes) %&gt;% 
+      ibs_scale(newdata = .validation, eval_times = btimes)
+  )
+
+ibs_vals
+```
+
+```
+##      Pre-implant data Week 1 follow-up data 
+##            0.03848166            0.08318288
+```
+
+---
+
+background-image: url(hex_stickers/PNG/knitr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+And clean up the presentation with `knitr::kable()` + `kableExtra`
+
+&lt;br/&gt;
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 2: Validation of two models using 2016-2017 INTERMACS data&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Scaled Brier &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; % Improvement &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Pre-implant data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.038 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Week 1 follow-up data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.083 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 116 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+layout: true
+class: center, middle
+
+---
+
+# Just a second
+
+---
+
+## Should we really impute missing values using mean/mode?
+
+---
+
+## Should we be using proportional hazards?
+
+---
+
+## What happened to the other 500-ish variables?
+
+---
+
+## Is this the best (scaled &amp; integrated) Brier score we can get?
+
+---
+
+# Modeling algorithms
+
+---
+layout: false
+background-image: url(hex_stickers/PNG/tidymodels.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+### Modeling algorithms
+
+**Definition**
+
+Think about the steps taken to develop a prediction function, `\(\widehat{f}\)`. 
+
+--
+
+That's the ad-hoc modeling algorithm definition. More formally, there are phases: 
+
+--
+
+- **Data pre-processing**
+
+    + Check validity of the data, handle missing values, handle factor levels, scale/center continuous variables, create new predictor variables, handle outliers, and much more.
+
+- **Model development**
+
+    + Select models, tuning parameters, and predictor variables to use, then fit the model(s).
+    
+- **Model ensembling**
+
+    + If multiple models were used, develop a strategy to pool them.
+
+---
+layout: true 
+background-image: url(hex_stickers/PNG/tidymodels.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+---
+
+more to come 
+
+---
+
+&lt;!-- --- --&gt;
+&lt;!-- class: middle, center --&gt;
+
+&lt;!-- # Resampling --&gt;
+
+&lt;!-- --- --&gt;
+&lt;!-- layout: true --&gt;
+&lt;!-- background-image: url(hex_stickers/PNG/rsample.png) --&gt;
+&lt;!-- background-position: 95% 2.5% --&gt;
+&lt;!-- background-size: 13% --&gt;
+
+&lt;!-- # Core Principles of ML --&gt;
+
+&lt;!-- ### Resampling --&gt;
+
+&lt;!-- --- --&gt;
+
+&lt;!-- **Definition:** Randomly drawing samples (with or without replacement) from a derivation dataset. --&gt;
+
+&lt;!-- **Applications:**  --&gt;
+
+&lt;!--   *Statistical inference:* Bootstrap resampling can be used to estimate distributions of parameters with unknown distributions.  --&gt;
+
+&lt;!-- - The difference between correlated `\(R^2\)` statistics. --&gt;
+
+&lt;!-- *Predictive analytics:* Estimate the error of a prediction rule when it is applied to new data. --&gt;
+
+&lt;!-- - Cross-validation --&gt;
+&lt;!-- - Bootstrap validation --&gt;
+&lt;!-- - Monte-carlo validation (focus for today) --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

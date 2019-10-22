@@ -19,3 +19,15 @@ scales
 htmlwidgets
 widgetframe
 magrittr
+tidymodels
+broom
+dials
+infer
+parsnip
+recipes
+rsample
+yardstick
+survival
+glue
+prodlim
+pec
