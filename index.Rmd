@@ -40,6 +40,7 @@ knitr::opts_chunk$set(
 library(diagram)
 library(tidyverse)
 library(tidymodels)
+library(tibbleOne)
 library(survival)
 library(gam)
 library(glue)
@@ -649,7 +650,6 @@ background-size: 120%
 
 ```{r, include = FALSE}
 
-library(tibbleOne)
 
 mcs <- read_csv('data/dead_M0_25MD.csv',guess_max = 20000) %>% 
   mutate(
@@ -665,15 +665,13 @@ mcs <- read_csv('data/dead_M0_25MD.csv',guess_max = 20000) %>%
     ),
     m0_impl_yr = factor(m0_impl_yr)
   ) %>% 
-  mutate_if(is.character, as.factor) %>% 
-  filter(time > 0)
+  mutate_if(is.character, as.factor) 
 
 ```
 
 ```{r, results='asis'}
 
 tb1 <- mcs %>% 
-  mutate_if(is.character, as.factor) %>% 
   select_labelled(
     surv_1yr = "Survived 1 year",
     m0_age_deident = "Age",
@@ -1260,24 +1258,31 @@ ref_data <- list(
         age2 = m0_age_deident^2,
         bmi = m0_wgt_kg / (m0_hgt_cm/100)^2
       ) %>%
-        # select(
-        #   time,
-        #   status,
-        #   age2,
-        #   bmi,
-        #   ccs,
-        #   periph_vasc,
-        #   current_smoker,
-        #   non_comp,
-        #   m0_ra_pres,
-        #   m0_cv_pres,
-        #   m0_bili_total_mg_dl,
-        #   m0_lvedd,
-        #   m0_intervention_48_hrs_dialysis,
-        #   m0_bun_mg_dl,
-        #   m0_albumin_g_dl,
-        #   m0_prev_cardiac_oper_none,
-        # ) %>% 
+        select(
+          time,
+          status,
+          everything()
+          # age2,
+          # bmi,
+          # ccs,
+          # periph_vasc,
+          # current_smoker,
+          # non_comp,
+          # m0_intervention_48_hrs_dialysis,
+          # m0_prev_cardiac_oper_none,
+          # m0_ra_pres,
+          # m0_cv_pres,
+          # m0_bili_total_mg_dl,
+          # m0_lvedd,
+          # m0_bun_mg_dl,
+          # m0_albumin_g_dl,
+          # m0_25_ra_pres,
+          # m0_25_cv_pres,
+          # m0_25_bili_total_mg_dl,
+          # m0_25_lvedd,
+          # m0_25_bun_mg_dl,
+          # m0_25_albumin_g_dl
+        ) %>%
         mutate_if(is.character, as.factor)
     }
   )
@@ -1469,13 +1474,15 @@ class: center, middle
 ## Is this the best (scaled & integrated) Brier score we can get?
 
 ---
+layout: false
+class: center, middle
 
 # Core principal 3:
 
 # Modeling algorithms
 
 ---
-layout: false
+layout: true 
 background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
@@ -1488,56 +1495,114 @@ background-size: 13%
 
 Think about the steps taken to develop a prediction function, $\widehat{f}$. 
 
---
-
 That's the ad-hoc modeling algorithm definition. More formally, there are phases: 
 
---
+---
 
 - **Data pre-processing**
 
-    + Check validity of the data, handle missing values, handle factor levels, scale/center continuous variables, create new predictor variables, handle outliers, and much more.
+    + Check validity of the data, 
+    + handle missing values (e.g., impute / discard), 
+    + handle factor levels (e.g., collapse / combine), 
+    + scale/center continuous variables, 
+    + create new predictor variables, 
+    + handle outliers, 
+    + and much more.
+    
+---
 
 - **Model development**
 
-    + Select models, tuning parameters, and predictor variables to use, then fit the model(s).
+    + Select modeling procedure,
+    + Select tuning parameters,
+    + Select predictors,
+    + Fit the model(s)
+
     
 ---
-layout: true 
+layout: false
 background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
 
 # Core Principles of ML
 
+### Modeling algorithms
+
+Let's focus on the **model development** phase. Our initial approach used 
+
+- a traditional statistical modeling procedure (`coxph`)
+
+- no tuning parameters
+
+- nine predictor variables selected by experts
+
+Let's evaluate an alternate approach that uses 
+
+- a stepwise implementation of `coxph`
+
+- one tuning parameter indicating the max number of steps: nine
+
+- nine (or less) predictor variables selected from about 500 candidates.
+
 ---
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
 
-### Case study
+# Core Principles of ML
 
-We have seen results using a standard pre-processing `recipe` mean and mode imputation).
+### Stepwise selection with INTERMACS
 
-What might happen if we applied nearest neighbor imputation instead?
+```{r, eval = FALSE, echo = TRUE}
 
-```{r, echo = TRUE, eval = FALSE}
+# pull x variables out of recipe
+xnames <- reci$var_info %>% 
+  filter(role == 'predictor') %>% 
+  pull(variable)
 
-reci <- recipe(
-  formula = time + status ~ ., 
-  data = derivation
-) %>% 
-  step_knnimpute(all_predictors()) %>%  
-  prep()
+# create full model formula (i.e., all predictors)
+full <- glue(
+  "Surv(time, status) ~ {glue_collapse(xnames, sep = '+')}"
+)
 
-.knn_derivation <- juice(reci)
-.knn_validation <- bake(reci, new_data = validation)
+# fit stepwise model
+step_mdl <- stepAIC(
+  object = coxph(Surv(time, status) ~ 1, data = .derivation),
+  scope = as.formula(full),
+  direction = 'both',
+  steps = 9,
+  trace = 0
+)
+
+# Extract the formula that was identified 
+frm_3 <- step_mdl$formula
 
 ```
 
 ---
+background-image: url(hex_stickers/PNG/purrr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+Now we just add `frm_3` to our `purrr::map()` code.
 
 ```{r}
+
+frm_3 <- read_rds('data/frm_3.rds')
+
+```
+
+```{r, echo = TRUE}
+
 ibs_vals <- list(
   `Pre-implant data` = frm_1,
-  `Week 1 follow-up data` = frm_2
+  `Week 1 follow-up data` = frm_2,
+  `Forward selection (pre-implant + week 1)` = frm_3
 ) %>% 
   map_dbl(
     .f = ~ coxph(.x, data = .derivation, x = TRUE) %>% 
@@ -1545,11 +1610,85 @@ ibs_vals <- list(
       ibs_scale(newdata = .validation, eval_times = btimes)
   )
 
-ibs_vals
 ```
 
+---
+
+# Core Principles of ML
+
+### Variables selected
+
+```{r}
+
+list(
+  `Pre-implant data` = frm_1,
+  `Week 1 follow-up data` = frm_2,
+  `Forward selection` = frm_3
+) %>%
+  map(all.vars) %>%
+  enframe() %>%
+  unnest_longer(col = value) %>%
+  filter(value != 'status', value != 'time') %>%
+  pivot_wider(
+    names_from = name,
+    values_from = value,
+    values_fn = list(value = list)
+  ) %>%
+  unnest(
+    cols = c(
+      `Pre-implant data`,
+      `Week 1 follow-up data`,
+      `Forward selection`
+    )
+  ) %>% 
+  kable(align = c('ccc')) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover")) %>% 
+  add_header_above(header = c("Expert formulas" = 2, " " = 1))
+
+```
 
 ---
+background-image: url(hex_stickers/PNG/knitr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+```{r}
+
+cap <- "Table 3: Validation of three models using 2016-2017 INTERMACS data"
+
+enframe(ibs_vals) %>% 
+  mutate(perc_impr = round(100 * (value / value[1] - 1))) %>% 
+  kable(
+    caption = cap,
+    digits = 3,
+    col.names = c('Model', 'Scaled Brier', "% Improvement")
+  ) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE)
+
+```
+
+<br/>
+
+*wow, that's not bad*.
+
+<br/>
+
+**Question** How do we know if it was optimal to take nine steps?
+
+---
+class: center, middle
+
+# Core principal 4:
+
+# Resampling
+
+---
+
+# to be filled in!
 
 <!-- --- -->
 <!-- class: middle, center -->

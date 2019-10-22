@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Introduction to Machine Learning
 ### Byron C. Jaeger
-### Last updated: 2019-10-21
+### Last updated: 2019-10-22
 
 ---
 
@@ -594,14 +594,14 @@ background-size: 120%
    &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; White, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
@@ -779,14 +779,14 @@ layout: false
    &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; White, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
@@ -904,14 +904,14 @@ layout: false
    &lt;td style="text-align:center;"&gt; 61.8 (11.3) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; White, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; White, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12717 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 12088 (67.0) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 114 (59.7) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 515 (69.0) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Implant year, % &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Implant year, n (%) &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
@@ -1188,7 +1188,9 @@ derivation &lt;- mcs %&gt;%
   select(-m0_impl_yr)
 
 validation &lt;- mcs %&gt;% 
-  filter(m0_impl_yr &gt;= 2016) %&gt;% 
+  filter(
+    m0_impl_yr &gt;= 2016
+  ) %&gt;% 
   select(-m0_impl_yr)
 
 dim(derivation)
@@ -1512,13 +1514,15 @@ class: center, middle
 ## Is this the best (scaled &amp; integrated) Brier score we can get?
 
 ---
+layout: false
+class: center, middle
 
 # Core principal 3:
 
 # Modeling algorithms
 
 ---
-layout: false
+layout: true 
 background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
@@ -1531,37 +1535,239 @@ background-size: 13%
 
 Think about the steps taken to develop a prediction function, `\(\widehat{f}\)`. 
 
---
-
 That's the ad-hoc modeling algorithm definition. More formally, there are phases: 
 
---
+---
 
 - **Data pre-processing**
 
-    + Check validity of the data, handle missing values, handle factor levels, scale/center continuous variables, create new predictor variables, handle outliers, and much more.
+    + Check validity of the data, 
+    + handle missing values (e.g., impute / discard), 
+    + handle factor levels (e.g., collapse / combine), 
+    + scale/center continuous variables, 
+    + create new predictor variables, 
+    + handle outliers, 
+    + and much more.
+    
+---
 
 - **Model development**
 
-    + Select models, tuning parameters, and predictor variables to use, then fit the model(s).
+    + Select modeling procedure,
+    + Select tuning parameters,
+    + Select predictors,
+    + Fit the model(s)
+
     
-- **Model ensembling**
-
-    + If multiple models were used, develop a strategy to pool them.
-
 ---
-layout: true 
+layout: false
 background-image: url(hex_stickers/PNG/tidymodels.png)
 background-position: 95% 2.5%
 background-size: 13%
 
 # Core Principles of ML
 
+### Modeling algorithms
+
+Let's focus on the **model development** phase. Our initial approach used 
+
+- a traditional statistical modeling procedure (`coxph`)
+
+- no tuning parameters
+
+- nine predictor variables selected by experts
+
+Let's evaluate an alternate approach that uses 
+
+- a stepwise implementation of `coxph`
+
+- one tuning parameter indicating the max number of steps: nine
+
+- nine (or less) predictor variables selected from about 500 candidates.
+
+---
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+
+```r
+# pull x variables out of recipe
+xnames &lt;- reci$var_info %&gt;% 
+  filter(role == 'predictor') %&gt;% 
+  pull(variable)
+
+# create full model formula (i.e., all predictors)
+full &lt;- glue(
+  "Surv(time, status) ~ {glue_collapse(xnames, sep = '+')}"
+)
+
+# fit stepwise model
+step_mdl &lt;- stepAIC(
+  object = coxph(Surv(time, status) ~ 1, data = .derivation),
+  scope = as.formula(full),
+  direction = 'both',
+  steps = 9,
+  trace = 0
+)
+
+# Extract the formula that was identified 
+frm_3 &lt;- step_mdl$formula
+```
+
+---
+background-image: url(hex_stickers/PNG/purrr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+Now we just add `frm_3` to our `purrr::map()` code.
+
+
+
+
+```r
+ibs_vals &lt;- list(
+  `Pre-implant data` = frm_1,
+  `Week 1 follow-up data` = frm_2,
+  `Forward selection (pre-implant + week 1)` = frm_3
+) %&gt;% 
+  map_dbl(
+    .f = ~ coxph(.x, data = .derivation, x = TRUE) %&gt;% 
+      predictSurvProb(newdata = .validation, times = btimes) %&gt;% 
+      ibs_scale(newdata = .validation, eval_times = btimes)
+  )
+```
+
 ---
 
-more to come 
+# Core Principles of ML
+
+### Variables selected
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;Expert formulas&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden" colspan="1"&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; Pre-implant data &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Week 1 follow-up data &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Forward selection &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; age2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; age2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_platelet_x10_3_ul &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; ccs &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; ccs &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_intub &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_cv_pres &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_cv_pres &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_bun_mg_dl &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_bili_total_mg_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_bili_total_mg_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_dialysis &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_lvedd &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_lvedd &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_age_deident &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_intervention_48_hrs_dialysis &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_intervention_48_hrs_dialysis &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_bili_total_mg_dl &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_bun_mg_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_bun_mg_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_warfarin &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_albumin_g_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_albumin_g_dl &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_sgot_ast &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; m0_prev_cardiac_oper_none &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_prev_cardiac_oper_none &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m0_25_cv_pres &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 ---
+background-image: url(hex_stickers/PNG/knitr.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 3: Validation of three models using 2016-2017 INTERMACS data&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Scaled Brier &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; % Improvement &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Pre-implant data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.038 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Week 1 follow-up data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.083 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 116 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Forward selection (pre-implant + week 1) &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 296 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;br/&gt;
+
+*wow, that's not bad*.
+
+&lt;br/&gt;
+
+**Question** How do we know if it was optimal to take nine steps?
+
+---
+class: center, middle
+
+# Core principal 4:
+
+# Resampling
+
+---
+
+# to be filled in!
 
 &lt;!-- --- --&gt;
 &lt;!-- class: middle, center --&gt;
