@@ -33,8 +33,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   fig.width=12, 
   fig.height=5.5, 
-  dpi=72*5,
-  cache = TRUE
+  dpi=72*5
 )
 
 library(diagram)
@@ -2224,13 +2223,13 @@ background-size: 18%
 
 ---
 
-**What is it?**
+### What is it?
 
 An extension of linear regression that penalizes regression solutions with larger coefficients. Shrinking coefficients to zero reduces the variance of the model and increases the bias.
 
 --
 
-**Why use it?**
+### Why use it?
 
 - Variable selection is completed during the fitting process
 
@@ -2279,14 +2278,17 @@ The `glmnet` R package is **fast** but not intuitive.
 
 library(glmnet)
 
+start <- Sys.time()
 net_cv <- cv.glmnet(
   x = train_x, 
   y = train_y, 
   family = 'cox', 
   alpha = 0.10
 )
+stop <- Sys.time()
 
-# plot(net_cv) on the next slide
+print(stop - start)
+
 
 ```
 
@@ -2296,7 +2298,7 @@ net_cv <- cv.glmnet(
 
 The `glmnet` R package is **fast** but not intuitive.
 
-- Cross-validation plots require a lot of explanation.
+- `plot(net_cv)` require a lot of explanation.
 
 
 ```{r}
