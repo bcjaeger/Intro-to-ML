@@ -2009,14 +2009,20 @@ The `glmnet` R package is **fast** but not intuitive.
 ```r
 library(glmnet)
 
+start &lt;- Sys.time()
 net_cv &lt;- cv.glmnet(
   x = train_x, 
   y = train_y, 
   family = 'cox', 
   alpha = 0.10
 )
+stop &lt;- Sys.time()
 
-# plot(net_cv) on the next slide
+print(stop - start)
+```
+
+```
+## Time difference of 3.655493 mins
 ```
 
 ---
@@ -2025,7 +2031,7 @@ net_cv &lt;- cv.glmnet(
 
 The `glmnet` R package is **fast** but not intuitive.
 
-- Cross-validation plots require a lot of explanation.
+- `plot(net_cv)` require a lot of explanation.
 
 
 ![](index_files/figure-html/unnamed-chunk-80-1.png)&lt;!-- --&gt;
