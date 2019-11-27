@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Introduction to Machine Learning
 ### Byron C. Jaeger
-### Last updated: 2019-10-22
+### Last updated: 2019-11-27
 
 ---
 
@@ -1467,7 +1467,7 @@ And clean up the presentation with `knitr::kable()` + `kableExtra`
 &lt;br/&gt;
 
 &lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
-&lt;caption&gt;Table 2: Validation of two models using 2016-2017 INTERMACS data&lt;/caption&gt;
+&lt;caption&gt;Table 2: Validation of three models using 2016-2017 INTERMACS data&lt;/caption&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt; Model &lt;/th&gt;
@@ -1605,7 +1605,19 @@ xnames &lt;- reci$var_info %&gt;%
 full &lt;- glue(
   "Surv(time, status) ~ {glue_collapse(xnames, sep = '+')}"
 )
+```
 
+---
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+
+```r
 # fit stepwise model
 step_mdl &lt;- stepAIC(
   object = coxph(Surv(time, status) ~ 1, data = .derivation),
@@ -1766,39 +1778,332 @@ class: center, middle
 # Resampling
 
 ---
+layout: true
+background-image: url(hex_stickers/PNG/rsample.png)
+background-position: 95% 2.5%
+background-size: 13%
 
-# to be filled in!
+# Core Principles of ML
 
-&lt;!-- --- --&gt;
-&lt;!-- class: middle, center --&gt;
+---
 
-&lt;!-- # Resampling --&gt;
+### Resampling
 
-&lt;!-- --- --&gt;
-&lt;!-- layout: true --&gt;
-&lt;!-- background-image: url(hex_stickers/PNG/rsample.png) --&gt;
-&lt;!-- background-position: 95% 2.5% --&gt;
-&lt;!-- background-size: 13% --&gt;
+**Why is this a core principle?**
 
-&lt;!-- # Core Principles of ML --&gt;
+Resampling allows analysts to simulate the development and external validation of a prediction equation using a specific modeling algorithm.
 
-&lt;!-- ### Resampling --&gt;
+**What is resampling?**
 
-&lt;!-- --- --&gt;
+We will talk about two types of resampling here:
 
-&lt;!-- **Definition:** Randomly drawing samples (with or without replacement) from a derivation dataset. --&gt;
+1. *Monte-Carlo cross-validation*: Repeatedly split an initial dataset into training/testing sets
 
-&lt;!-- **Applications:**  --&gt;
+2. *K-fold cross-validation*: Partitioning an initial dataset into folds, then letting each fold serve as a testing set while the remaining folds form a training set.
 
-&lt;!--   *Statistical inference:* Bootstrap resampling can be used to estimate distributions of parameters with unknown distributions.  --&gt;
+Note: CV = cross-validation from here on out.
 
-&lt;!-- - The difference between correlated `\(R^2\)` statistics. --&gt;
+---
 
-&lt;!-- *Predictive analytics:* Estimate the error of a prediction rule when it is applied to new data. --&gt;
+### Monte-Carlo CV
 
-&lt;!-- - Cross-validation --&gt;
-&lt;!-- - Bootstrap validation --&gt;
-&lt;!-- - Monte-carlo validation (focus for today) --&gt;
+Randomly select a set of training data (blue rows) from the derivation data.
+
+![](index_files/figure-html/unnamed-chunk-72-1.png)&lt;!-- --&gt;
+
+---
+
+### Monte-Carlo CV
+
+Use the training data to develop one prediction rule per modeling algorithm. 
+
+![](index_files/figure-html/unnamed-chunk-73-1.png)&lt;!-- --&gt;
+
+---
+
+### Monte-Carlo CV
+
+Apply each prediction rule to the testing data, creating a set of predictions for each. 
+
+![](index_files/figure-html/unnamed-chunk-74-1.png)&lt;!-- --&gt;
+
+---
+
+### Monte-Carlo CV
+
+Evaluate each set of predictions
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; P(Mortality) &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Mortality &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Difference &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Squared Difference &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0.51 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; -0.49 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2401 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0.54 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.54 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2916 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0.53 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.53 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2809 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0.60 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.60 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3600 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+`$$\text{Brier Score} = \frac{1}{N} \sum_{i=1}^N (\widehat{f}(x_i)-y_i)^2 = \frac{0.24 + 0.29 + 0.28 + 0.36}{4} = 0.29$$`
+
+---
+layout: false
+class: middle, center
+
+# Resampling diagrams
+
+---
+class: middle, center
+
+&lt;img src="index_files/figure-html/unnamed-chunk-76-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url(figs/kfold_cv.png)
+background-position: 50% 50%
+background-size: 100%
+
+---
+layout: true
+background-image: url(hex_stickers/PNG/rsample.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Computers and k-fold CV
+
+---
+
+Remember how we selected 9 variables for our first stepwise model?
+
+
+```r
+# fit stepwise model
+step_mdl &lt;- stepAIC(
+  object = coxph(Surv(time, status) ~ 1, data = .derivation),
+  scope = as.formula(full),
+  direction = 'both',
+  steps = 9,
+  trace = 0
+)
+
+# Extract the formula that was identified 
+frm_3 &lt;- step_mdl$formula
+```
+
+
+---
+
+
+**Question** How long did that take?
+
+- There are ~530 candidate predictor variables, so we fit ~530 models in each step. (Why?)
+
+- Suppose it takes about 0.11 seconds to fit each model.
+
+- `\(\rightarrow\)` it takes roughly 58 seconds (~1 minute) to complete one step.
+
+- `\(\rightarrow\)` It takes roughly 530 minutes (~9 hours) to complete 530 steps. 
+
+---
+
+**Question** How long would it take to find the best step number using 10-fold CV?
+
+- Divide the derivation data into 10 folds (~1 second)
+
+- Run through all the steps using folds 1-9 as training data, and validating on fold 10 (~ 9 hours)
+
+- Repeat 9 more times validating on folds 9, 8, ..., and 1 (~ 81 hours)
+
+**Answer** About 90 hours, which is almost 4 days.
+
+--
+
+**What if we could do this in under 5 minutes?**
+
+---
+layout: true
+background-image: url(figs/esl.jpg)
+background-position: 96% 4%
+background-size: 18%
+
+# Elastic net regression
+
+---
+
+**What is it?**
+
+An extension of linear regression that penalizes regression solutions with larger coefficients. Shrinking coefficients to zero reduces the variance of the model and increases the bias.
+
+--
+
+**Why use it?**
+
+- Variable selection is completed during the fitting process
+
+- `\(N &lt; p\)` is no problem (N = number of rows, p = number of columns)
+
+- The `glmnet` package is **fast** and fits all kinds of elastic net models. 
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Data need to be coerced into a matrix with one-hot encoded categorical columns. 
+
+
+```r
+library(xgboost.surv) # for cat_yyy functions
+
+train_x &lt;- .derivation %&gt;% 
+  select(-c(time, status)) %&gt;% 
+  cat_spread() %&gt;% 
+  as.matrix()
+
+train_y &lt;- .derivation %&gt;% 
+  select(time, status) %&gt;% 
+  as.matrix()
+
+test_x &lt;- .validation %&gt;% 
+  select(-c(time, status)) %&gt;% 
+  cat_transfer(.derivation) %&gt;% 
+  cat_spread() %&gt;% 
+  as.matrix()
+```
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- A parameter called `alpha` needs to be specified explicitly. Another parameter called `lambda` is determined using cross-validation. 
+
+
+```r
+library(glmnet)
+
+net_cv &lt;- cv.glmnet(
+  x = train_x, 
+  y = train_y, 
+  family = 'cox', 
+  alpha = 0.10
+)
+
+# plot(net_cv) on the next slide
+```
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Cross-validation plots require a lot of explanation.
+
+
+![](index_files/figure-html/unnamed-chunk-80-1.png)&lt;!-- --&gt;
+
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Computing predicted survival probability is done using `c060`.
+
+- The authors of `c060` are still developing the functions to do this. 
+
+
+```r
+net_prd  &lt;- c060:::fit.glmnet(
+  response = train_y, 
+  x = train_x, 
+  family = 'cox',
+  alpha = 0.10,
+  cplx = net_cv$lambda.min
+) %&gt;% 
+  c060:::predictProb.glmnet(
+    x = test_x,
+    times = btimes,
+    response = train_y,
+    complexity = net_cv$lambda.min
+  )
+```
+
+---
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- But it is worth it!
+
+
+```r
+net_ibs &lt;- ibs_scale(net_prd, newdata = .validation, btimes)
+
+ibs_vals &lt;- c(ibs_vals,
+  'Elastic regression (pre-implant + week 1)' = net_ibs)
+```
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Table 3: Validation of four models using 2016-2017 INTERMACS data&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Scaled Brier &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; % Improvement &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Pre-implant data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.038 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Week 1 follow-up data &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.083 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 116 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Forward selection (pre-implant + week 1) &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 296 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Elastic regression (pre-implant + week 1) &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.162 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 322 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -34,11 +34,11 @@ knitr::opts_chunk$set(
   fig.width=12, 
   fig.height=5.5, 
   dpi=72*5,
-  cache = FALSE
+  cache = TRUE
 )
 
 library(diagram)
-library(tidyverse)
+library(MASS)
 library(tidymodels)
 library(tibbleOne)
 library(survival)
@@ -51,6 +51,7 @@ library(scales)
 library(widgetframe)
 library(magrittr)
 library(pec)
+library(tidyverse)
 
 thm  <- theme_bw() + 
   theme(
@@ -1436,7 +1437,7 @@ And clean up the presentation with `knitr::kable()` + `kableExtra`
 
 ```{r}
 
-cap <- "Table 2: Validation of two models using 2016-2017 INTERMACS data"
+cap <- "Table 2: Validation of three models using 2016-2017 INTERMACS data"
 
 enframe(ibs_vals) %>% 
   mutate(perc_impr = round(100 * (value / value[1] - 1))) %>% 
@@ -1566,6 +1567,19 @@ full <- glue(
   "Surv(time, status) ~ {glue_collapse(xnames, sep = '+')}"
 )
 
+```
+
+---
+background-image: url(figs/intermacs_logo.jpg)
+background-position: 97% 3%
+background-size: 15%
+
+# Core Principles of ML
+
+### Stepwise selection with INTERMACS
+
+```{r, eval = FALSE, echo = TRUE}
+
 # fit stepwise model
 step_mdl <- stepAIC(
   object = coxph(Surv(time, status) ~ 1, data = .derivation),
@@ -1687,37 +1701,668 @@ class: center, middle
 # Resampling
 
 ---
+layout: true
+background-image: url(hex_stickers/PNG/rsample.png)
+background-position: 95% 2.5%
+background-size: 13%
 
-# to be filled in!
+# Core Principles of ML
 
-<!-- --- -->
-<!-- class: middle, center -->
+---
 
-<!-- # Resampling -->
+### Resampling
 
-<!-- --- -->
-<!-- layout: true -->
-<!-- background-image: url(hex_stickers/PNG/rsample.png) -->
-<!-- background-position: 95% 2.5% -->
-<!-- background-size: 13% -->
+**Why is this a core principle?**
 
-<!-- # Core Principles of ML -->
+Resampling allows analysts to simulate the development and external validation of a prediction equation using a specific modeling algorithm.
 
-<!-- ### Resampling -->
+**What is resampling?**
 
-<!-- --- -->
+We will talk about two types of resampling here:
 
-<!-- **Definition:** Randomly drawing samples (with or without replacement) from a derivation dataset. -->
+1. *Monte-Carlo cross-validation*: Repeatedly split an initial dataset into training/testing sets
 
-<!-- **Applications:**  -->
+2. *K-fold cross-validation*: Partitioning an initial dataset into folds, then letting each fold serve as a testing set while the remaining folds form a training set.
 
-<!--   *Statistical inference:* Bootstrap resampling can be used to estimate distributions of parameters with unknown distributions.  -->
+Note: CV = cross-validation from here on out.
 
-<!-- - The difference between correlated $R^2$ statistics. -->
+---
 
-<!-- *Predictive analytics:* Estimate the error of a prediction rule when it is applied to new data. -->
+### Monte-Carlo CV
 
-<!-- - Cross-validation -->
-<!-- - Bootstrap validation -->
-<!-- - Monte-carlo validation (focus for today) -->
+Randomly select a set of training data (blue rows) from the derivation data.
+
+```{r}
+
+par(mar = c(1, 1, 1, 1)/10, mfrow = c(1, 1))
+
+nsubs=8
+trn_col="skyblue"
+tst_col="grey70"
+
+trn=sample(nsubs, round(nsubs/2))
+ntrn=length(trn)
+cols=rep(tst_col,nsubs)
+cols[trn]=trn_col
+
+plotmat(matrix(nrow = nsubs, ncol = nsubs, byrow = TRUE, data = 0), 
+  pos = rep(1,nsubs), name = paste("Participant", 1:nsubs), 
+  lwd = 1, box.lwd = 1, box.cex = 1.5, box.size = 0.3,
+  box.type = "rect", box.prop = 0.075, shadow.size=0.002,
+  box.col=cols)
+
+```
+
+---
+
+### Monte-Carlo CV
+
+Use the training data to develop one prediction rule per modeling algorithm. 
+
+```{r}
+
+par(mar = c(1, 1, 1, 1)/10, mfrow = c(1, 1))
+
+mdl_col='green'
+prd_col='violet'
+
+yvals=seq(0.20,0.80,length.out=ntrn)
+
+
+pos=map(yvals,~c(0.20,.))%>%
+  reduce(rbind)%>%rbind(c(0.50,0.25),
+    c(0.50,0.75),
+    c(0.80,0.25),
+    c(0.80,0.75))
+
+M <- matrix(nrow = ntrn+4, 
+  ncol = ntrn+4, 
+  byrow = TRUE, data = 0)
+
+M[ntrn+1:2,1:ntrn]=1
+M[8,6]=1
+M[7,5]=1
+
+C=M
+C[ntrn+1,1:ntrn]=0.07
+C[ntrn+2,1:ntrn]=-0.07
+C[8,6]=0
+C[7,5]=0
+
+
+plotmat(M, pos = pos, 
+  box.col = c(rep(trn_col, ntrn),rep(mdl_col,2),rep(prd_col,2)),
+  name = c(paste("Participant", sort(trn, decreasing = T)),
+    paste('Modeling \nAlgorithm',2:1), 
+    paste('Prediction \nRule',2:1)),
+  lwd = 1, box.lwd = 1, box.cex = 1.5, 
+  box.size = c(rep(0.1,ntrn),rep(0.1,2),rep(0.1,2)),
+  box.type = c(rep("rect",ntrn),rep("ellipse",2),rep("square",2)), 
+  box.prop = c(rep(0.3,ntrn),rep(1,2),rep(0.5,2)), 
+  shadow.size=0.002,dtext=1000, curve=C)
+
+```
+
+---
+
+### Monte-Carlo CV
+
+Apply each prediction rule to the testing data, creating a set of predictions for each. 
+
+```{r}
+
+par(mar = c(1, 1, 1, 1), mfrow = c(1, 1))
+
+tst=setdiff(1:nsubs,trn)
+ntst=length(tst)
+
+p1=map(yvals,~c(0.20,.))%>%reduce(rbind)
+p2=c(0.50,0.50)
+p3=map(yvals,~c(0.80,.))%>%reduce(rbind)
+
+pos=rbind(p1,p2,p3)
+
+M <- matrix(nrow = 2*ntst+1, 
+  ncol = 2*ntst+1, 
+  byrow = TRUE, data = 0)
+
+M[ntst+1,1:ntst]=1; M[(ntst+2):nrow(M),ntst+1]=1; 
+
+C=M; C[ntst+2, ntst+1]=0
+C[ntst+1,1:ntst]=seq(-0.06, 0.06, length.out=ntst)
+C[(ntst+2):nrow(C),ntst+1]=0
+
+set.seed(329)
+
+prds=round(runif(ntst),2)
+
+outs=rbinom(ntst,prob = 0.5,size=1)
+
+dtbl=data.frame(cbind(prds=rev(prds),outs=outs))%>%
+  mutate(diff=prds-outs,sqdf=diff^2)
+
+
+plotmat(M, pos = pos, 
+  box.col = c(rep(tst_col, ntst),prd_col,
+    rep(tst_col, ntst)),
+  name = c(paste("Participant", sort(tst, decreasing = T)),
+    'Prediction \nRule',
+    paste("P(Mortality) =", format(prds,nsmall=2))),
+  lwd = 1, box.lwd = 1, box.cex = 1.5, 
+  box.size = c(rep(0.11,ntrn),0.1),
+  box.type = c(rep("rect",ntst),"square"), 
+  box.prop = c(rep(0.3,ntst),1), 
+  shadow.size=0.002, curve=C,dtext=1000)
+
+```
+
+---
+
+### Monte-Carlo CV
+
+Evaluate each set of predictions
+
+```{r}
+
+dtbl%>%
+  set_names(
+    c("P(Mortality)","Mortality",
+      "Difference","Squared Difference")
+  ) %>% 
+  kable(
+    align=c('c','c','c','c')
+  ) %>%
+  kable_styling(
+    position = "center", 
+    bootstrap_options = c("striped", "hover"),
+    full_width = TRUE
+  ) 
+
+
+```
+
+$$\text{Brier Score} = \frac{1}{N} \sum_{i=1}^N (\widehat{f}(x_i)-y_i)^2 = \frac{`r paste(format(round(dtbl$sqdf,2),nsmall=2),collapse=" + ")`}{`r ntst`} = `r format(round(mean(dtbl$sqdf),2),nsmall=2)`$$
+
+---
+layout: false
+class: middle, center
+
+# Resampling diagrams
+
+---
+class: middle, center
+
+```{r, fig.height=8, fig.width=10, fig.align='center'}
+
+par(mar = c(1, 1, 1, 1)/10, mfrow = c(1, 1))
+
+trn_col="burlywood"
+tst_col="antiquewhite"
+
+#xvals=c(0.125,0.325,0.725)
+xvals=c(0.12,0.78)
+yvals = c(0.75, 0.55, 0.35, 0.10)
+
+step1=paste(
+  'Randomly',
+  'split the',
+  'derivation',
+  'data into',
+  'a training', 
+  'set and a',
+  'test set',
+  sep=' \n')
+
+step2 = paste( 
+  'Apply each candidate modeling',
+  'algorithm\u2020 to the training',
+  'set, separately, to develop one',
+  'predictive equation for each.',
+  sep=' \n')
+
+step3 = paste(
+  'Apply each predictive equation',
+  'from Step 2, separately, to the',
+  'test set to create one set of',
+  'predictions for each algorithm',
+  'that can be evaluated in Step 4.',
+  sep=' \n')
+
+step4 = paste( 
+  'Compute and record the',
+  'calibration, discrimination,',
+  'and Brier score for each',
+  'set of predictions from',
+  'Step 3, separately.',
+  sep=' \n')
+
+step5 = paste( 
+  'Repeat Steps 1-4',
+  '100+ times to',
+  'internally validate', 
+  'each algorithm.',
+  sep=' \n')
+
+stepf = paste( 
+  'Based on internally validated calibration, discrimination, and Brier score estimates,',
+  'select one algorithm to develop predictive equations using the full set of derivation data.',
+  sep=' \n')
+
+
+rx=list(super=1/3, big=1/6, small=1/15)
+ry=list(super=.15, big=.08, small=0.03)
+
+bump_coef <- 6/5
+txt_size=1.1
+
+xmid = mean(
+  c(
+    xvals[1]+rx$big,
+    xvals[2]-rx$super
+  )
+)
+
+openplotmat()
+
+
+# Arrows ------------------------------------------------------------------
+
+straightarrow(
+  from = c(xvals[1]+rx$big,yvals[1]+0.45*ry$super*bump_coef),
+  to = c(xvals[2],yvals[1]+0.45*ry$super*bump_coef),
+  arr.pos=0.43
+)
+
+straightarrow(
+  from = c(xvals[2],yvals[1]+2.2*ry$small),
+  to = c(xvals[2],yvals[2]+0.13),
+  arr.pos = 1
+)
+
+straightarrow(
+  from = c(xvals[2],yvals[2]),
+  to = c(xvals[2],yvals[3]-2.2*ry$small+0.13),
+  arr.pos = 1
+)
+
+bentarrow(
+  from = c(xmid,yvals[1]-0.45*ry$super*bump_coef),
+  to = c(xvals[2],yvals[2]),
+  path = 'V',
+  arr.pos=0.41
+)
+
+treearrow(
+  from = c(xvals[1]+rx$small,yvals[1]),
+  to = c(xmid-rx$small,yvals[1]+0.45*ry$super*bump_coef),
+  path = 'V',
+  arr.pos=0.97
+)
+
+treearrow(
+  from = c(xvals[1]+rx$small,yvals[1]),
+  to = c(xmid-rx$small,yvals[1]-0.45*ry$super*bump_coef),
+  path = 'V',
+  arr.pos=0.97
+)
+
+straightarrow(
+  from = c(xvals[2]-rx$big,yvals[3]-2.2*ry$small),
+  to = c(xvals[1]+rx$big*0.65, yvals[3]-2.2*ry$small),
+  arr.pos = 1
+)
+
+straightarrow(
+  from = c(xvals[1],yvals[3]+ry$small),
+  to = c(xvals[1],yvals[1]-0.20),
+  arr.pos = 1
+)
+
+straightarrow(
+  from = c(xvals[1],yvals[3]-5*ry$small),
+  to = c(xvals[1],yvals[4]+ry$small),
+  arr.pos = 1
+)
+
+
+# Step 1 ------------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[1],yvals[1]+0.15), 
+  lab = 'STEP 1', 
+  font = 2, 
+  cex = txt_size)
+
+textempty(
+  mid = c(xvals[1],yvals[1]-0.15), 
+  lab = 'Derivation \ndata', 
+  font = 2, 
+  cex = txt_size)
+
+textrect(
+  mid = c(xvals[1],yvals[1]), 
+  radx = rx$small*1.20, 
+  rady = 0.80*ry$super, 
+  lab = step1, 
+  font = 1,
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col='white')
+
+textrect(
+  mid = c(xmid,yvals[1]+0.45*ry$super*bump_coef), 
+  radx = rx$small, 
+  rady = 0.90*ry$super/2, 
+  lab = "Training \nset", 
+  font = 2,
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col=trn_col)
+
+textrect(
+  mid = c(xmid,yvals[1]-0.45*ry$super*bump_coef), 
+  radx = rx$small, 
+  rady = 0.90*ry$super/2, 
+  lab = "Test \nset", 
+  font = 2,
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col=tst_col)
+
+
+# Step 2 ------------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[2],yvals[1]+2.2*ry$small+0.10), 
+  lab = 'STEP 2', 
+  font = 2, 
+  cex = txt_size)
+
+textrect(
+  mid = c(xvals[2],yvals[1]+2.2*ry$small), 
+  radx = rx$big, 
+  rady = ry$big, 
+  lab = step2, 
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col=trn_col)
+
+
+# Step 3 ------------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[2],yvals[2]+0.10), 
+  lab = 'STEP 3', 
+  font = 2, 
+  cex = txt_size)
+
+textrect(
+  mid = c(xvals[2],yvals[2]), 
+  radx = rx$big, 
+  rady = ry$big, 
+  lab = step3, 
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col=tst_col)
+
+# Step 4 ------------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[2],yvals[3]-2.2*ry$small+0.10), 
+  lab = 'STEP 4', 
+  font = 2, 
+  cex = txt_size)
+
+textrect(
+  mid = c(xvals[2],yvals[3]-2.2*ry$small), 
+  radx = rx$big, 
+  rady = ry$big, 
+  lab = step4, 
+  cex = txt_size,
+  shadow.size = 1e-10,
+  box.col='mistyrose')
+
+# Step 5 ------------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[1],yvals[3]), 
+  lab = 'STEP 5', 
+  font = 2, 
+  cex = txt_size)
+
+textempty(
+  mid = c(xvals[1],yvals[3]-0.025*3), 
+  lab = step5, 
+  cex = txt_size)
+
+# Final step --------------------------------------------------------------
+
+textempty(
+  mid = c(xvals[1],yvals[4]), 
+  lab = 'STEP 6', 
+  font = 2, 
+  cex = txt_size)
+
+textempty(
+  mid = c(xvals[1]+0.05, yvals[4]+0.025), 
+  lab = stepf, 
+  adj = c(0,1),
+  cex = txt_size)
+
+```
+
+---
+background-image: url(figs/kfold_cv.png)
+background-position: 50% 50%
+background-size: 100%
+
+---
+layout: true
+background-image: url(hex_stickers/PNG/rsample.png)
+background-position: 95% 2.5%
+background-size: 13%
+
+# Computers and k-fold CV
+
+---
+
+Remember how we selected 9 variables for our first stepwise model?
+
+```{r, eval = FALSE, echo = TRUE}
+
+# fit stepwise model
+step_mdl <- stepAIC(
+  object = coxph(Surv(time, status) ~ 1, data = .derivation),
+  scope = as.formula(full),
+  direction = 'both',
+  steps = 9,
+  trace = 0
+)
+
+# Extract the formula that was identified 
+frm_3 <- step_mdl$formula
+
+```
+
+
+---
+
+
+**Question** How long did that take?
+
+- There are ~530 candidate predictor variables, so we fit ~530 models in each step. (Why?)
+
+- Suppose it takes about 0.11 seconds to fit each model.
+
+- $\rightarrow$ it takes roughly 58 seconds (~1 minute) to complete one step.
+
+- $\rightarrow$ It takes roughly 530 minutes (~9 hours) to complete 530 steps. 
+
+---
+
+**Question** How long would it take to find the best step number using 10-fold CV?
+
+- Divide the derivation data into 10 folds (~1 second)
+
+- Run through all the steps using folds 1-9 as training data, and validating on fold 10 (~ 9 hours)
+
+- Repeat 9 more times validating on folds 9, 8, ..., and 1 (~ 81 hours)
+
+**Answer** About 90 hours, which is almost 4 days.
+
+--
+
+**What if we could do this in under 5 minutes?**
+
+---
+layout: true
+background-image: url(figs/esl.jpg)
+background-position: 96% 4%
+background-size: 18%
+
+# Elastic net regression
+
+---
+
+**What is it?**
+
+An extension of linear regression that penalizes regression solutions with larger coefficients. Shrinking coefficients to zero reduces the variance of the model and increases the bias.
+
+--
+
+**Why use it?**
+
+- Variable selection is completed during the fitting process
+
+- $N < p$ is no problem (N = number of rows, p = number of columns)
+
+- The `glmnet` package is **fast** and fits all kinds of elastic net models. 
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Data need to be coerced into a matrix with one-hot encoded categorical columns. 
+
+```{r, echo = TRUE}
+
+library(xgboost.surv) # for cat_yyy functions
+
+train_x <- .derivation %>% 
+  select(-c(time, status)) %>% 
+  cat_spread() %>% 
+  as.matrix()
+
+train_y <- .derivation %>% 
+  select(time, status) %>% 
+  as.matrix()
+
+test_x <- .validation %>% 
+  select(-c(time, status)) %>% 
+  cat_transfer(.derivation) %>% 
+  cat_spread() %>% 
+  as.matrix()
+
+```
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- A parameter called `alpha` needs to be specified explicitly. Another parameter called `lambda` is determined using cross-validation. 
+
+```{r, echo = TRUE}
+
+library(glmnet)
+
+net_cv <- cv.glmnet(
+  x = train_x, 
+  y = train_y, 
+  family = 'cox', 
+  alpha = 0.10
+)
+
+# plot(net_cv) on the next slide
+
+```
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Cross-validation plots require a lot of explanation.
+
+
+```{r}
+
+plot(net_cv)
+
+```
+
+
+---
+
+**How to use it**
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- Computing predicted survival probability is done using `c060`.
+
+- The authors of `c060` are still developing the functions to do this. 
+
+```{r, echo = TRUE}
+
+net_prd  <- c060:::fit.glmnet(
+  response = train_y, 
+  x = train_x, 
+  family = 'cox',
+  alpha = 0.10,
+  cplx = net_cv$lambda.min
+) %>% 
+  c060:::predictProb.glmnet(
+    x = test_x,
+    times = btimes,
+    response = train_y,
+    complexity = net_cv$lambda.min
+  )
+
+```
+
+---
+
+The `glmnet` R package is **fast** but not intuitive.
+
+- But it is worth it!
+
+```{r, echo = TRUE}
+
+net_ibs <- ibs_scale(net_prd, newdata = .validation, btimes)
+
+ibs_vals <- c(ibs_vals,
+  'Elastic regression (pre-implant + week 1)' = net_ibs)
+
+```
+
+```{r, echo = FALSE}
+
+cap <- "Table 3: Validation of four models using 2016-2017 INTERMACS data"
+
+enframe(ibs_vals) %>% 
+  mutate(perc_impr = round(100 * (value / value[1] - 1))) %>% 
+  kable(
+    caption = cap,
+    digits = 3,
+    col.names = c('Model', 'Scaled Brier', "% Improvement")
+  ) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE)
+
+
+```
+
 
